@@ -1,7 +1,8 @@
 FROM registry.fedoraproject.org/fedora-minimal:34
 
+ARG RUBY_VERSION
 RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
-  microdnf module enable -y ruby:2.7 && \
+  microdnf module enable -y ruby:${RUBY_VERSION} && \
   microdnf module enable -y nodejs:14 && \
   microdnf install -y \
   autoconf \
@@ -38,17 +39,11 @@ RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
 
 ONBUILD ARG UID=1000
 ONBUILD RUN useradd -d /ruby -l -m -Uu ${UID} -r -s /bin/bash ruby && \
-  echo '. /etc/profile' >> /ruby/.profile && \
   chown -R ${UID}:${UID} /ruby
 
+
+RUN gem install bundler
+
 USER 1000:1000
-
-
-ARG RUBY_CONFIGURE_OPTS=""
-ARG RUBY_VERSION=2.7.3
-RUN RUBY_CONFIGURE_OPTS="${RUBY_CONFIGURE_OPTS}" rbenv install ${RUBY_VERSION} && \
-  rbenv global ${RUBY_VERSION} && \
-  rbenv rehash && \
-  gem install bundler
 
 ONBUILD USER ${UID}:${UID}
