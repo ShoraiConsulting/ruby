@@ -41,9 +41,4 @@ ONBUILD ARG UID=1000
 ONBUILD RUN useradd -d /ruby -l -m -Uu ${UID} -r -s /bin/bash ruby && \
   chown -R ${UID}:${UID} /ruby
 
-
 RUN gem install bundler
-
-USER 1000:1000
-
-ONBUILD USER ${UID}:${UID}
