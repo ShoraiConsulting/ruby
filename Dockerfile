@@ -14,8 +14,8 @@ RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
   cronie \
   gcc-c++ \
   git-core \
-  jemalloc-devel \
   libffi-devel \
+  libpq-devel \
   libtool \
   libyaml-devel \
   libxml2-devel \
@@ -24,7 +24,7 @@ RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
   nodejs \
   openssl-devel \
   patch \
-  postgresql-devel \
+  postgresql \
   redhat-rpm-config \
   ruby \
   ruby-devel \
