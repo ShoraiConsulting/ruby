@@ -1,10 +1,11 @@
 FROM registry.fedoraproject.org/fedora-minimal:34
 
 ARG RUBY_VERSION
-RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
+RUN microdnf --nodocs upgrade -y && \
+  microdnf install -y fedora-repos-modular-34-2.noarch && \
   microdnf module enable -y ruby:${RUBY_VERSION} && \
   microdnf module enable -y nodejs:14 && \
-  microdnf install -y \
+  microdnf --nodocs install -y \
   autoconf \
   automake \
   bash \
@@ -33,8 +34,7 @@ RUN microdnf install -y fedora-repos-modular-34-2.noarch && \
   sqlite-devel \
   zlib \
   zlib-devel && \
-  microdnf reinstall -y tzdata && \
-  microdnf update -y && \
+  microdnf --nodocs reinstall -y tzdata && \
   microdnf clean all
 
 ONBUILD ARG UID=1000
