@@ -6,4 +6,5 @@ services:
       dockerfile: Dockerfile
       args:
         - RUBY_VERSION=${RUBY_VERSION}
+        - FEDORA_VERSION=${FEDORA_VERSION}
     image: ghcr.io/katarti/ruby:${RUBY_VERSION}
