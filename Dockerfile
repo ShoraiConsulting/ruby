@@ -27,6 +27,7 @@ RUN microdnf --nodocs upgrade -y && \
     openssl-devel \
     patch \
     postgresql \
+    procps-ng \
     redhat-rpm-config \
     ruby \
     ruby-devel \
