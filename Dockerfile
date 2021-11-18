@@ -23,6 +23,7 @@ RUN microdnf --nodocs upgrade -y && \
     libxml2-devel \
     libxslt-devel \
     make \
+    nano \ 
     nodejs \
     openssl-devel \
     patch \
@@ -34,6 +35,7 @@ RUN microdnf --nodocs upgrade -y && \
     readline-devel \
     shared-mime-info \
     sqlite-devel \
+    vim \
     zlib \
     zlib-devel && \
     microdnf --nodocs reinstall -y tzdata && \
