@@ -35,6 +35,7 @@ RUN microdnf --nodocs upgrade -y && \
     readline-devel \
     shared-mime-info \
     sqlite-devel \
+    sudo \
     vim \
     zlib \
     zlib-devel && \
