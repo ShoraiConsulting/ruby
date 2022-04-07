@@ -2,8 +2,8 @@ ARG FEDORA_VERSION
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION}
 
 ARG RUBY_VERSION
-RUN microdnf --nodocs upgrade -y && \
-    microdnf install -y fedora-repos-modular.noarch && \
+RUN microdnf --nodocs -y upgrade && \
+    microdnf --nodocs -y install fedora-repos-modular && \
     microdnf module enable -y ruby:${RUBY_VERSION} && \
     microdnf module enable -y nodejs:14 && \
     microdnf --nodocs install -y \
@@ -35,7 +35,6 @@ RUN microdnf --nodocs upgrade -y && \
     readline-devel \
     shared-mime-info \
     sqlite-devel \
-    sudo \
     vim \
     zlib \
     zlib-devel && \
