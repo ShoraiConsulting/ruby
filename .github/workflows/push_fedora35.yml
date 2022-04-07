@@ -9,6 +9,7 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
+  FEDORA_VERSION: 35
 
 jobs:
   lint:
@@ -31,8 +32,9 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.0']
-        fedora: [35]
+        ruby: [
+          '3.0'
+        ]
 
     steps:
       - uses: actions/checkout@v3
@@ -42,15 +44,15 @@ jobs:
           echo "DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ruby" >> ${GITHUB_ENV}
 
       - name: render docker-compose.yml
-        run: RUBY_VERSION=${{ matrix.ruby }} FEDORA_VERSION=${{ matrix.fedora }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
+        run: RUBY_VERSION=${{ matrix.ruby }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
 
       - name: Build image
         run: docker-compose -f docker-compose.yml build ruby
 
       - name: Tag image
         run: |
-          docker tag ruby-fedora:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}
-          docker tag ruby-fedora:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
+          docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}
+          docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
 
       - name: Log into registry
         # This is where you will update the PAT to GITHUB_TOKEN
