@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   ruby:
     build:
@@ -8,3 +9,12 @@ services:
         - RUBY_VERSION=${RUBY_VERSION}
         - FEDORA_VERSION=${FEDORA_VERSION}
     image: ruby:${RUBY_VERSION}
+
+  ruby-jemalloc:
+    build:
+      context: .
+      dockerfile: jemalloc.dockerfile
+      args:
+        - RUBY_VERSION=${RUBY_VERSION}
+        - FEDORA_VERSION=${FEDORA_VERSION}
+    image: ruby:${RUBY_VERSION}-jemalloc

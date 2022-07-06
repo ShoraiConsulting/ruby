@@ -17,6 +17,7 @@ RUN microdnf --nodocs -y upgrade && \
     cronie \
     gcc-c++ \
     git-core \
+    jemalloc \
     libffi-devel \
     libpq-devel \
     libtool \
@@ -38,9 +39,12 @@ RUN microdnf --nodocs -y upgrade && \
     sqlite-devel \
     vim \
     zlib \
-    zlib-devel && \
+    zlib-devel \
+    $ADDITIONAL_PACKAGES && \
     microdnf --nodocs reinstall -y tzdata && \
     microdnf clean all
+
+ENV LD_PRELOAD=/usr/lib64/libjemalloc.so.2
 
 ONBUILD ARG UID=1000
 ONBUILD RUN useradd -d /ruby -l -m -Uu ${UID} -r -s /bin/bash ruby && \
