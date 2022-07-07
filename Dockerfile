@@ -1,5 +1,5 @@
 ARG FEDORA_VERSION
-FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION}
+FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} as bare
 
 ARG RUBY_VERSION
 
@@ -42,8 +42,22 @@ RUN microdnf --nodocs -y upgrade && \
     microdnf --nodocs reinstall -y tzdata && \
     microdnf clean all
 
+RUN gem install bundler
+
+
+FROM bare as base
+
 ONBUILD ARG UID=1000
 ONBUILD RUN useradd -d /ruby -l -m -Uu ${UID} -r -s /bin/bash ruby && \
     chown -R ${UID}:${UID} /ruby
 
-RUN gem install bundler
+
+FROM bare as jemalloc
+
+ONBUILD ARG UID=1000
+ONBUILD RUN useradd -d /ruby -l -m -Uu ${UID} -r -s /bin/bash ruby && \
+    chown -R ${UID}:${UID} /ruby
+
+RUN microdnf --nodocs install -y jemalloc
+
+ENV LD_PRELOAD=/usr/lib64/libjemalloc.so.2
