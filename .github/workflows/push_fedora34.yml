@@ -33,8 +33,7 @@ jobs:
           config: hadolint-ci.yaml
 
       - name: Set image name
-        run: |
-          echo "DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ruby" >> ${GITHUB_ENV}
+        run: echo "DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ruby" >> ${GITHUB_ENV}
 
       - name: Render docker-compose.yml
         run: RUBY_VERSION=${{ matrix.ruby }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
