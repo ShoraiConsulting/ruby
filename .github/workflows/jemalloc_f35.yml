@@ -12,7 +12,7 @@ env:
   FEDORA_VERSION: 35
 
 jobs:
-  push:
+  jemalloc:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -39,14 +39,12 @@ jobs:
       - name: Render docker-compose.yml
         run: RUBY_VERSION=${{ matrix.ruby }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
 
-      - name: Build images
-        run: docker-compose -f docker-compose.yml build
+      - name: Build image
+        run: docker-compose -f docker-compose.yml build ruby-jemalloc
 
       - name: Tag image
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
-          docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}
-          docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
           docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
           docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
 
@@ -57,8 +55,6 @@ jobs:
       - name: Push images
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
           docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
           docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
 

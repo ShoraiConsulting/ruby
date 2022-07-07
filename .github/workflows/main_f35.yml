@@ -3,16 +3,15 @@ on:
   push:
     branches:
       - master
-  pull_request:
   schedule:
     - cron: "0 2 * * 0"
 
 env:
   DOCKER_BUILDKIT: 1
-  FEDORA_VERSION: 34
+  FEDORA_VERSION: 35
 
 jobs:
-  push:
+  main:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -21,7 +20,8 @@ jobs:
     strategy:
       matrix:
         ruby: [
-          '2.6'
+          '2.7',
+          '3.0'
         ]
 
     steps:
@@ -38,16 +38,14 @@ jobs:
       - name: Render docker-compose.yml
         run: RUBY_VERSION=${{ matrix.ruby }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
 
-      - name: Build images
-        run: docker-compose -f docker-compose.yml build
+      - name: Build image
+        run: docker-compose -f docker-compose.yml build ruby
 
       - name: Tag image
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}
           docker tag ruby:${{ matrix.ruby }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
-          docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
-          docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
 
       - name: Log into registry
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
@@ -58,8 +56,6 @@ jobs:
         run: |
           docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}
           docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
