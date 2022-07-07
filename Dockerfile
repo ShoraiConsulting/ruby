@@ -24,7 +24,6 @@ RUN microdnf --nodocs -y upgrade && \
     libxml2-devel \
     libxslt-devel \
     make \
-    nano \
     nodejs \
     openssl-devel \
     patch \
