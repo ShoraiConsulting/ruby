@@ -1,4 +1,4 @@
-ARG FEDORA_VERSION
+ARG FEDORA_VERSION=38
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} as bare
 
 ARG RUBY_VERSION
