@@ -1,5 +1,6 @@
 name: Docker build and push
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -8,7 +9,7 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  FEDORA_VERSION: 35
+  FEDORA_VERSION: 38
 
 jobs:
   main:
