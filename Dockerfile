@@ -8,7 +8,7 @@ ARG POSTGRES_VERSION
 ARG ROCKY_VERSION
 
 RUN microdnf --nodocs -y upgrade && \
-    microdnf --nodocs -y install epel-release && \
+    microdnf --nodocs --enablerepo=crb -y install epel-release && \
     microdnf module enable -y ruby:${RUBY_VERSION} postgresql:${POSTGRES_VERSION} && \
     microdnf --nodocs install -y \
     autoconf \
