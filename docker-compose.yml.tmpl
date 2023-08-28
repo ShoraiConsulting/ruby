@@ -8,6 +8,7 @@ services:
         - RUBY_VERSION=${RUBY_VERSION}
         - ROCKY_VERSION=${ROCKY_VERSION}
         - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - ADDITIONAL_REPO=${ADDITIONAL_REPO}
     image: ruby:${RUBY_VERSION}-default
 
   jemalloc:
@@ -18,6 +19,7 @@ services:
         - RUBY_VERSION=${RUBY_VERSION}
         - ROCKY_VERSION=${ROCKY_VERSION}
         - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - ADDITIONAL_REPO=${ADDITIONAL_REPO}
     image: ruby:${RUBY_VERSION}-jemalloc
 
   nodejs:
@@ -28,6 +30,7 @@ services:
         - RUBY_VERSION=${RUBY_VERSION}
         - ROCKY_VERSION=${ROCKY_VERSION}
         - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - ADDITIONAL_REPO=${ADDITIONAL_REPO}
     image: ruby:${RUBY_VERSION}-nodejs
 
   nodejs-jemalloc:
@@ -38,4 +41,5 @@ services:
         - RUBY_VERSION=${RUBY_VERSION}
         - ROCKY_VERSION=${ROCKY_VERSION}
         - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - ADDITIONAL_REPO=${ADDITIONAL_REPO}
     image: ruby:${RUBY_VERSION}-nodejs-jemalloc
