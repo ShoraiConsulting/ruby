@@ -1,19 +1,20 @@
 name: Docker build and push
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
   pull_request:
-  #schedule:
-    #- cron: "0 2 * * 0"
+  schedule:
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
 
 env:
   DOCKER_BUILDKIT: 1
-  FEDORA_VERSION: 38
+  ROCKY_VERSION: 9
+  POSTGRES_VERSION: 15
 
 jobs:
-  jemalloc:
+  ruby:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -21,13 +22,27 @@ jobs:
 
     strategy:
       matrix:
-        ruby: [
-          '2.7',
-          '3.0'
+        ruby: ["3.1", "2.7"]
+        version: [
+          "default",
+          "jemalloc",
+          "nodejs",
+          "nodejs-jemalloc"
         ]
+        include:
+          - ruby: "2.7"
+            rocky_version: 8
+            additional_repo: powertools
+          - ruby: "3.1"
+            rocky_version: 9
+            additional_repo: crb
 
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - uses: hadolint/hadolint-action@v2.0.0
         with:
@@ -35,19 +50,19 @@ jobs:
           config: hadolint-ci.yaml
 
       - name: Set image name
-        run: echo "DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ruby" >> ${GITHUB_ENV}
+        run: echo "DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ruby" >> "$GITHUB_ENV"
 
       - name: Render docker-compose.yml
-        run: RUBY_VERSION=${{ matrix.ruby }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
+        run: RUBY_VERSION=${{ matrix.ruby }} ROCKY_VERSION=${{ matrix.rocky_version }} ADDITIONAL_REPO=${{ matrix.additional_repo }} envsubst <  docker-compose.yml.tmpl >  docker-compose.yml
 
       - name: Build image
-        run: docker-compose -f docker-compose.yml build ruby-jemalloc
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build ${{ matrix.version }}
 
       - name: Tag image
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
-          docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
-          docker tag ruby:${{ matrix.ruby }}-jemalloc ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
+          docker tag ruby:${{ matrix.ruby }}-${{ matrix.version }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ matrix.version }}
+          docker tag ruby:${{ matrix.ruby }}-${{ matrix.version }} ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ matrix.version }}-${{ github.run_number }}
 
       - name: Log into registry
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
@@ -56,8 +71,8 @@ jobs:
       - name: Push images
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc
-          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-jemalloc-${{ github.run_number }}
+          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}
+          docker push ${DOCKER_IMAGE}:${{ matrix.ruby }}-${{ github.run_number }}
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2

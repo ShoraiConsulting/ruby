@@ -1,3 +1,3 @@
 # docker-ruby
 
-This repository provides Fedora-based Ruby Docker images.
+This repository provides Rocky-based Ruby Docker images.
